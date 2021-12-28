@@ -3,13 +3,13 @@ import streamlit as st
 import os
 
 """
-# Welcome to Streamlit v33!
+# Welcome to Streamlit v38!
 Edit `/streamlit_app.py` to customize this app to your heart's desire :heart:
 If you have any questions, checkout our [documentation](https://docs.streamlit.io) and [community
 forums](https://discuss.streamlit.io).
 In the meantime, below is an example of what you can do with just a few lines of code:
 """
-st.title("Test App 477")
+st.title("Test App 55577")
 
 value = st.slider("Pick a number", 0, 10, 3)
 st.write(os.getcwd())
