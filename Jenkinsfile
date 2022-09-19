@@ -14,14 +14,16 @@ pipeline {
 
         stage('Build') { 
             steps { 
-                script{
-                 app = docker.build("underwater")
-                }
+                sh """
+                 docker build -t streamlit:v1 .
+                """
             }
         }
         stage('Test'){
             steps {
-                echo 'Empty'
+                sh """
+                 docker run -rm streamlit:v1
+                """
             }
         }
     }
