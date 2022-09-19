@@ -21,7 +21,8 @@ pipeline {
         }
         stage('Test'){
             steps {
-                 docker version && env
+                env
+                //  docker version && env
             }
         }
         stage('Deploy') {
