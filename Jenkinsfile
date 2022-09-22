@@ -35,10 +35,10 @@ pipeline {
                 secretKeyVariable: 'AWS_SECRET_ACCESS_KEY'
                 ]]){
                 sh """
-                 export AWS_DEFAULT_REGION=us-east-2
-                 aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 698324764230.dkr.ecr.us-east-1.amazonaws.com && \
-                 docker tag streamlit:${env.BUILD_NUMBER} 698324764230.dkr.ecr.us-east-1.amazonaws.com/streamlit-demo:${env.BUILD_NUMBER} && \
-                 docker push 698324764230.dkr.ecr.us-east-1.amazonaws.com/streamlit-demo:${env.BUILD_NUMBER}
+                 export AWS_DEFAULT_REGION=us-east-1
+                 aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws/z1l0c6l7 && \
+                 docker tag streamlit:${env.BUILD_NUMBER} public.ecr.aws/z1l0c6l7/simpleapp:${env.BUILD_NUMBER} && \
+                 docker push public.ecr.aws/z1l0c6l7/simpleapp:${env.BUILD_NUMBER}
                 """
                 }
             }
