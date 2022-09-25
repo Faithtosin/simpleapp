@@ -1,16 +1,14 @@
-def cloneDir = "app-config"
-def imageName = "public.ecr.aws/z1l0c6l7/simpleapp"
-
-// get git commit hash
-def scmInfo = checkout scm
-def gitCommit = "${scmInfo.GIT_COMMIT}"
-
-def env = "stage"
-
 pipeline {
     agent any
     options {
         skipStagesAfterUnstable()
+    }
+    environment {
+        cloneDir = 'app-config'
+        imageName = 'public.ecr.aws/z1l0c6l7/simpleapp'
+        scmInfo = checkout scm
+        gitCommit = "${scmInfo.GIT_COMMIT}"
+        env = "stage"
     }
     stages {
          stage('Clone repository') { 
