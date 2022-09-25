@@ -9,7 +9,7 @@ pipeline {
         scmInfo = checkout scm
         gitCommit = "${scmInfo.GIT_COMMIT}"
         ENV = "stage"
-        deployRepoUrl = "https://${GIT_DEPLOY_KEY}@github.com/Faithtosin/argocd-apps.git"
+        deployRepoUrl = "git@github.com:Faithtosin/argocd-apps.git"
     }
     stages {
          stage('Clone repository') { 
@@ -38,16 +38,18 @@ pipeline {
         }
         stage('Deploy'){
             steps {
-                withCredentials([string(credentialsId: 'githubDeployKey', variable: 'GIT_DEPLOY_KEY')]) {
+                withCredentials([file(credentialsId: 'GIT_DEPLOY_SSH', variable: 'GIT_DEPLOY_KEY')]) {
                     sh """
+                    mkdir /var/lib/jenkins/.ssh/ && cp \$GIT_DEPLOY_KEY /var/lib/jenkins/.ssh/id_rsa && chmod 400 /var/lib/jenkins/.ssh/id_rsa
                     rm -rf ${cloneDir}
-                    git clone ${deployRepoUrl} ${cloneDir}
+                    git clone -b ${ENV} ${deployRepoUrl} ${cloneDir}
                     cd ${cloneDir}
                     
                     export cloneDirFullPath=`pwd`
-                    cd simpleapp-public/overlays/${ENV}
+                    cd simpleapp-public/base
                     kustomize edit set image ${imageName}:${gitCommit}
                     cd \$cloneDirFullPath
+                    ls -la
                     ./update-image.sh ${env} ${imageName} ${gitCommit}
                     """
                 }
