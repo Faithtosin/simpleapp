@@ -3,8 +3,8 @@ import streamlit as st
 import os
 
 """
-# Welcome to Streamlit v19!!!!
-Edit `/streamlit_app.py` to customize this app to your heart's desire :heart:
+# Welcome to Streamlit v19!!!! :heart:
+
 If you have any questions, checkout our [documentation](https://docs.streamlit.io) and [community
 forums](https://discuss.streamlit.io).
 In the meantime, below is an example of what you can do with just a few lines of code:
