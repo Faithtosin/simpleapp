@@ -48,7 +48,7 @@ pipeline {
         }
         stage('Deploy'){
             steps {
-                withCredentials([text(credentialsId: 'githubDeployKey', variable: 'GIT_DEPLOY_KEY')]) {
+                withCredentials([string(credentialsId: 'githubDeployKey', variable: 'GIT_DEPLOY_KEY')]) {
                     sh """
                     git clone ${deployRepoUrl} cloneDir
                     cd cloneDir
