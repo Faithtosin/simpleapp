@@ -8,7 +8,8 @@ pipeline {
         imageName = 'public.ecr.aws/z1l0c6l7/simpleapp'
         scmInfo = checkout scm
         gitCommit = "${scmInfo.GIT_COMMIT}"
-        env = "stage"
+        ENV = "stage"
+        deployRepoUrl = "https://${GIT_DEPLOY_KEY}@github.com/Faithtosin/argocd-apps.git"
     }
     stages {
          stage('Clone repository') { 
@@ -39,13 +40,14 @@ pipeline {
             steps {
                 withCredentials([string(credentialsId: 'githubDeployKey', variable: 'GIT_DEPLOY_KEY')]) {
                     sh """
-                    export deployRepoUrl = "https://${GIT_DEPLOY_KEY}@github.com/Faithtosin/argocd-apps.git"
-                    git clone ${deployRepoUrl} cloneDir
-                    cd cloneDir
+                    rm -rf ${cloneDir}
+                    git clone ${deployRepoUrl} ${cloneDir}
+                    cd ${cloneDir}
+                    
                     export cloneDirFullPath=`pwd`
-                    cd simpleapp-public/overlays/${env}
+                    cd simpleapp-public/overlays/${ENV}
                     kustomize edit set image ${imageName}:${gitCommit}
-                    cd ${cloneDirFullPath}
+                    cd \$cloneDirFullPath
                     ./update-image.sh ${env} ${imageName} ${gitCommit}
                     """
                 }
