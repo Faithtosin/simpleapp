@@ -1,4 +1,3 @@
-def deployRepoUrl = "https://$GIT_DEPLOY_KEY@github.com/Faithtosin/argocd-apps.git"
 def cloneDir = "app-config"
 def imageName = "public.ecr.aws/z1l0c6l7/simpleapp"
 
@@ -50,6 +49,7 @@ pipeline {
             steps {
                 withCredentials([string(credentialsId: 'githubDeployKey', variable: 'GIT_DEPLOY_KEY')]) {
                     sh """
+                    export deployRepoUrl = "https://${GIT_DEPLOY_KEY}@github.com/Faithtosin/argocd-apps.git"
                     git clone ${deployRepoUrl} cloneDir
                     cd cloneDir
                     export cloneDirFullPath=`pwd`
