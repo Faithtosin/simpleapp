@@ -18,14 +18,7 @@ pipeline {
                 }
             }
         }
-
-        stage('install dependencies') { 
-            steps { 
-                sh """
-                 curl -s "https://raw.githubusercontent.com/kubernetes-sigs/kustomize/master/hack/install_kustomize.sh"  | bash
-                """
-            }
-        }
+        
         stage('Build'){
             steps {
                 withCredentials([[
