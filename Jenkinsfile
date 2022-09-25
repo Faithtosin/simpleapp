@@ -2,6 +2,12 @@ def deployRepoUrl = "https://$GIT_DEPLOY_KEY@github.com/Faithtosin/argocd-apps.g
 def cloneDir = "app-config"
 def imageName = "public.ecr.aws/z1l0c6l7/simpleapp"
 
+// get git commit hash
+def scmInfo = checkout scm
+def gitCommit = "${scmInfo.GIT_COMMIT}"
+
+def env = "stage"
+
 pipeline {
     agent any
     options {
@@ -24,10 +30,6 @@ pipeline {
                 """
             }
         }
-        // get git commit hash
-        def scmInfo = checkout scm
-        def gitCommit = "${scmInfo.GIT_COMMIT}"
-
         stage('Build'){
             steps {
                 withCredentials([[
@@ -44,7 +46,6 @@ pipeline {
                 }
             }
         }
-        def env = "stage"
         stage('Deploy'){
             steps {
                 withCredentials([file(credentialsId: 'githubDeployKey', variable: 'GIT_DEPLOY_KEY')]) {
