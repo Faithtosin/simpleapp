@@ -1,3 +1,7 @@
+def deployRepoUrl = "https://$GIT_DEPLOY_KEY@github.com/Faithtosin/argocd-apps.git"
+def cloneDir = "app-config"
+def imageName = "public.ecr.aws/z1l0c6l7/simpleapp"
+
 pipeline {
     agent any
     options {
@@ -12,21 +16,19 @@ pipeline {
             }
         }
 
-        stage('Build') { 
+        stage('install dependencies') { 
             steps { 
                 sh """
-                 docker build -t streamlit:${env.BUILD_NUMBER} .
+                 apt install make
+                 curl -s "https://raw.githubusercontent.com/kubernetes-sigs/kustomize/master/hack/install_kustomize.sh"  | bash
                 """
             }
         }
-        stage('Test'){
-            steps {
-                sh """
-                 docker run -d streamlit:${env.BUILD_NUMBER}
-                """
-            }
-        }
-        stage('Push'){
+        // get git commit hash
+        def scmInfo = checkout scm
+        def gitCommit = "${scmInfo.GIT_COMMIT}"
+
+        stage('Build'){
             steps {
                 withCredentials([[
                 $class: 'AmazonWebServicesCredentialsBinding',
@@ -37,9 +39,24 @@ pipeline {
                 sh """
                  export AWS_DEFAULT_REGION=us-east-1
                  aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws/z1l0c6l7 && \
-                 docker tag streamlit:${env.BUILD_NUMBER} public.ecr.aws/z1l0c6l7/simpleapp:${env.BUILD_NUMBER} && \
-                 docker push public.ecr.aws/z1l0c6l7/simpleapp:${env.BUILD_NUMBER}
+                 make publish
                 """
+                }
+            }
+        }
+        def env = "stage"
+        stage('Deploy'){
+            steps {
+                withCredentials([file(credentialsId: 'githubDeployKey', variable: 'GIT_DEPLOY_KEY')]) {
+                    sh """
+                    git clone ${deployRepoUrl} cloneDir
+                    cd cloneDir
+                    export cloneDirFullPath=`pwd`
+                    cd simpleapp-public/overlays/${env}
+                    kustomize edit set image ${imageName}:${gitCommit}
+                    cd ${cloneDirFullPath}
+                    ./update-image.sh ${env} ${imageName} ${gitCommit}
+                    """
                 }
             }
         }
