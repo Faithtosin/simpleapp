@@ -8,7 +8,7 @@ pipeline {
         imageName = 'public.ecr.aws/z1l0c6l7/simpleapp'
         scmInfo = checkout scm
         gitCommit = "${scmInfo.GIT_COMMIT}"
-        ENV = "stage"
+        ENV = "staging"
         deployRepoUrl = "git@github.com:Faithtosin/argocd-apps.git"
     }
     stages {
@@ -42,7 +42,7 @@ pipeline {
                     sh """
                     mkdir /var/lib/jenkins/.ssh/ && cp \$GIT_DEPLOY_KEY /var/lib/jenkins/.ssh/id_rsa && chmod 400 /var/lib/jenkins/.ssh/id_rsa
                     rm -rf ${cloneDir}
-                    git clone -b ${ENV} ${deployRepoUrl} ${cloneDir}
+                    git clone ${deployRepoUrl} ${cloneDir}
                     cd ${cloneDir}
                     
                     export cloneDirFullPath=`pwd`
@@ -50,7 +50,7 @@ pipeline {
                     kustomize edit set image ${imageName}:${gitCommit}
                     cd \$cloneDirFullPath
                     ls -la
-                    ./update-image.sh ${env} ${imageName} ${gitCommit}
+                    ./update-image.sh ${ENV} ${imageName} ${gitCommit}
                     """
                 }
             }
