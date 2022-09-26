@@ -8,7 +8,7 @@ pipeline {
         imageName = 'public.ecr.aws/z1l0c6l7/simpleapp'
         scmInfo = checkout scm
         gitCommit = "${scmInfo.GIT_COMMIT}"
-        ENV = "staging"
+        ENV = "head"
         deployRepoUrl = "git@github.com:Faithtosin/argocd-apps.git"
     }
     stages {
@@ -46,7 +46,7 @@ pipeline {
                     cd ${cloneDir}
                     
                     export cloneDirFullPath=`pwd`
-                    cd simpleapp-public/base
+                    cd simpleapp-public/overlays/${ENV}
                     kustomize edit set image ${imageName}:${gitCommit}
                     cd \$cloneDirFullPath
                     ls -la
