@@ -8,7 +8,7 @@ pipeline {
         imageName = 'public.ecr.aws/z1l0c6l7/simpleapp'
         scmInfo = checkout scm
         gitCommit = "${scmInfo.GIT_COMMIT}"
-        ENV1 = "head"
+        ENV1 = "staging"
         ENV2 = "prod"
         deployRepoUrl = "git@github.com:Faithtosin/argocd-apps.git"
     }
