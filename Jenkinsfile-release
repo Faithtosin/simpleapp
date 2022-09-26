@@ -54,7 +54,7 @@ pipeline {
                     kustomize edit set image ${imageName}:${gitCommit}
                     cd \$cloneDirFullPath
                     ls -la
-                    ./update-image.sh ${ENV} ${imageName} ${gitCommit}
+                    ./update-image.sh ${ENV1} ${imageName} ${gitCommit}
                     """
                 }
             }
