@@ -1,7 +1,12 @@
 pipeline {
-    agent any
+    agent {
+        docker {
+            image 'ubuntu:latest'
+        }
+    }
     options {
         skipStagesAfterUnstable()
+        timestamps()
     }
     environment {
         cloneDir = 'app-config'
