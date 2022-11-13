@@ -3,6 +3,21 @@ def set_up_buildx(){
     sh "docker buildx create --name builder --use --platform linux/amd64 --node builder0"
     sh "docker buildx inspect builder --bootstrap"
 }
+
+def build_step(){
+    withCredentials([[
+    $class: 'AmazonWebServicesCredentialsBinding',
+    credentialsId: "aws-credentials",
+    accessKeyVariable: 'AWS_ACCESS_KEY_ID',
+    secretKeyVariable: 'AWS_SECRET_ACCESS_KEY'
+    ]]){
+    sh """
+     export AWS_DEFAULT_REGION=us-east-1
+     aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws/z1l0c6l7 && \
+     make publish-buildx
+    """
+    }
+}
 pipeline {
     agent any
     options {
@@ -30,34 +45,12 @@ pipeline {
             parallel {
                 stage('Build-1'){
                     steps {
-                        withCredentials([[
-                        $class: 'AmazonWebServicesCredentialsBinding',
-                        credentialsId: "aws-credentials",
-                        accessKeyVariable: 'AWS_ACCESS_KEY_ID',
-                        secretKeyVariable: 'AWS_SECRET_ACCESS_KEY'
-                        ]]){
-                        sh """
-                         export AWS_DEFAULT_REGION=us-east-1
-                         aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws/z1l0c6l7 && \
-                         make publish-buildx
-                        """
-                        }
+                        script {build_step()}
                     }
                 }
                 stage('Build-2'){
                     steps {
-                        withCredentials([[
-                        $class: 'AmazonWebServicesCredentialsBinding',
-                        credentialsId: "aws-credentials",
-                        accessKeyVariable: 'AWS_ACCESS_KEY_ID',
-                        secretKeyVariable: 'AWS_SECRET_ACCESS_KEY'
-                        ]]){
-                        sh """
-                         export AWS_DEFAULT_REGION=us-east-1
-                         aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws/z1l0c6l7 && \
-                         make publish-buildx
-                        """
-                        }
+                        script {build_step()}
                     }
                 }
             }
