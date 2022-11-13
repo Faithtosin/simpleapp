@@ -14,3 +14,9 @@ docker-build:
 	docker build -t $(REPO)/$(BINARY_NAME):$(GIT_VERSION) .
 publish: docker-build
 	docker push $(REPO)/$(BINARY_NAME):$(GIT_VERSION)
+
+docker-buildx-build:
+	docker buildx --load --platform linux/amd64 --progress plain -t $(REPO)/$(BINARY_NAME):$(GIT_VERSION) .
+
+publish-buildx: docker-buildx-build
+	docker push $(REPO)/$(BINARY_NAME):$(GIT_VERSION)
