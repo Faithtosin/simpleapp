@@ -1,5 +1,5 @@
 def set_up_buildx(){
-    sh "docker run --rm --priviledged multiarch/qemu-user-static --reset -p yes"
+    sh "docker run --rm --privileged multiarch/qemu-user-static --reset -p yes"
     sh "docker buildx create --name builder --use --platform linux/amd64 --node builder0"
     sh "docker buildx inspect builder --bootstrap"
 }
@@ -80,6 +80,11 @@ pipeline {
                     """
                 }
             }
+        }
+    }
+    post {
+        always {
+            cleanWs()
         }
     }
 }
