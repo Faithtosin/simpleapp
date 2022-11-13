@@ -16,6 +16,7 @@ pipeline {
         gitCommit = "${scmInfo.GIT_COMMIT}"
         ENV = "head"
         deployRepoUrl = "git@github.com:Faithtosin/argocd-apps.git"
+        BUILDX_ENABLED = set_up_buildx()
     }
     stages {
          stage('Clone repository') { 
