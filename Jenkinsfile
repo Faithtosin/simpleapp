@@ -19,7 +19,7 @@ def build_step(){
     }
 }
 pipeline {
-    agent any
+    agent { docker 'ubuntu' }
     options {
         skipStagesAfterUnstable()
         timestamps()
