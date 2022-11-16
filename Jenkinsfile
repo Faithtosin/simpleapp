@@ -1,3 +1,5 @@
+@Library('jenkins_lib') _
+
 def set_up_buildx(){
     sh "docker buildx create --name builder --use --platform linux/amd64 --node builder0"
     sh "docker buildx inspect builder --bootstrap"
@@ -39,6 +41,11 @@ pipeline {
                 checkout scm
                 sh "docker run --rm --privileged multiarch/qemu-user-static --reset -p yes"
                 }
+            }
+        }
+        stage('test library') { 
+            steps { 
+                script{HelloWorld()}
             }
         }
         stage('Build Docker file') {
