@@ -1,5 +1,3 @@
-@Library('jenkins_lib') _
-
 def set_up_buildx(){
     sh "docker buildx create --name builder --use --platform linux/amd64 --node builder0"
     sh "docker buildx inspect builder --bootstrap"
