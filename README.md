@@ -1,1 +1,1 @@
-# simpleapp-public
+# simpleapp
